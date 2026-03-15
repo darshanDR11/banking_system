@@ -1,4 +1,3 @@
-```
 -- 1. Display all records from the customers table.
 select * from customers;
 
@@ -175,5 +174,3 @@ select first_name, last_name, city from customers;
 
 -- 60. Show employee names and positions.
 select first_name, last_name, position from employees;
-
-```
