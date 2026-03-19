@@ -18,7 +18,6 @@ from employees as e join (  select branch_id, avg(salary) as average_salary
                             order by branch_id) as ans on e.branch_id = ans.branch_id
 where e.salary < ans.average_salary;
 
-
 -- 385. Find branches whose average employee salary is greater than the bank-wide average salary.
 select branch_id, round(avg(salary),2) as average_salary
 from employees 
@@ -106,7 +105,6 @@ join (select customer_id, round(avg(loan_amount),2) as average_loan_amount from 
 on a1.customer_id = a2.customer_id
 where a1.total_loan_amount > average_loan_amount;
 
-
 -- 400. Find branches whose total loan amount exceeds the average loan amount across branches.
 select 
 	branch_id, 
@@ -171,11 +169,10 @@ select * from employees where not employee_id in (select manager_id from branche
 
 -- 412. Find customers who have never performed any transactions.
 select * from customers 
-where not customer_id in ( 
-							select distinct customer_id 
-                            from accounts 
+where not customer_id in (	select distinct customer_id 
+                         	from accounts 
                             where account_id in (select distinct source_account_id from transactions)
-							              or account_id in (select distinct destination_account_id from transactions));
+							or account_id in (select distinct destination_account_id from transactions));
 
 
 -- 413. Find accounts that have never sent a transaction.
@@ -233,27 +230,26 @@ where customer_id in (
 					on a1.customer_id = a2.customer_id 
 					where total_balance > average_balance);
                     
-                    
 -- 427. Find transactions where a cash withdrawal amount is greater than all previous successful withdrawal amounts
 select *  
 from transactions 
 where destination_account_id is null 
-	and status = "Success"
-	and amount > all (	select amount 
-          						from transactions 
-          						where destination_account_id is null 
-                      and status = "Success" 
-          						and amount != (select max(amount) from (select amount from transactions where destination_account_id is null and status = "Success") as ans));
+and status = "Success"
+and amount > all (select amount 
+          		from transactions 
+    			where destination_account_id is null 
+				and status = "Success" 
+          		and amount != (select max(amount) from (select amount from transactions where destination_account_id is null and status = "Success") as ans));
 
 -- 428. Find loan types whose average loan amount exceeds the average of all loan types.
 select 
-	  loan_type, 
+	loan_type, 
     round(avg(loan_amount),2) as average_loan_amount 
 from loans 
 group by loan_type 
 having average_loan_amount > (select avg(average_loan_amount) 
 							  from (select loan_type round(avg(loan_amount),2) as average_loan_amount 
-								from loans group by loan_type) as ans
+							  from loans group by loan_type) as ans
 							 );
 
 -- 429. Find loan payment methods whose average payment amount exceeds the bank average.
