@@ -95,7 +95,7 @@ order by transaction_type;
 select 
   salary_type, 
   count(employee_id) as total_employee 
-from (select 
+from (	select 
 		    employee_id, 
 		    case when salary < 40000 then "Low Salary" when salary < 70000 then "Medium Salary" else "High Salary" end as salary_type 
 	    from employees) as ans
@@ -106,9 +106,9 @@ order by salary_type;
 select 
 	loan_risk, 
 	count(loan_id) 
-from (select 
+from (	select 
 		    loan_id, 
-        case when interest_rate < 7.00 then "Low Risk" else "High Risk" end as loan_risk 
+        	case when interest_rate < 7.00 then "Low Risk" else "High Risk" end as loan_risk 
 	    from loans) as ans
 group by loan_risk 
 order by loan_risk desc;
@@ -117,33 +117,33 @@ order by loan_risk desc;
 select 
 	old_new_customer, 
 	count(customer_id) as total_customer
-from (select 
-		    customer_id, 
-        case when created_at < curdate()  then "Old" else "New" end as old_new_customer 
+from (	select 
+			customer_id, 
+        	case when created_at < curdate()  then "Old" else "New" end as old_new_customer 
 	    from customers) as ans
 group by old_new_customer
 order by old_new_customer;
 
 -- 451. Find total balance grouped by balance category.
 select 
-	  type, 
+	type, 
     round(sum(balance),2) as total_balance 
-from (select 
-		      account_id, 
-          balance,
-		      case when balance < 20000 then "Low Balance" when balance < 200000 then "Medium Balance" else "High Balance" end as type 
-	    from accounts) as ans
+from (	select 
+			account_id, 
+	        balance,
+		    case when balance < 20000 then "Low Balance" when balance < 200000 then "Medium Balance" else "High Balance" end as type 
+		from accounts) as ans
 group by type
 order by total_balance;
 
 -- 452. Find total transaction amount grouped by transaction size category.
 select 
-	  transaction_type, 
+	transaction_type, 
     round(sum(amount),2) as total_amount
 from (select 
-      		transaction_id, 
-          amount,
-      		case when amount < 5000 then "Small" when amount < 15000 then "Medium" else "Large" end as transaction_type 
+      	transaction_id, 
+      	amount,
+      	case when amount < 5000 then "Small" when amount < 15000 then "Medium" else "Large" end as transaction_type 
       from transactions) as ans
 group by transaction_type
 order by transaction_type;
@@ -186,14 +186,14 @@ order by payment_category;
 
 -- 456. Show each account with a flag 'High Balance' if above average balance.
 select 
-	  account_id, 
+	account_id, 
     balance, 
     case when balance > (select avg(balance) from accounts) then 1 else 0 end as High_Balance 
 from accounts;
 
 -- 457. Show each employee with a flag 'Above Avg Salary' or 'Below Avg Salary'.
 select  
-	  employee_id, 
+	employee_id, 
     first_name, 
     last_name, 
     salary, 
@@ -209,21 +209,21 @@ from transactions;
  
 -- 459. Show each loan with 'Above Avg Loan' flag.
 select 
-	  loan_id, 
+	loan_id, 
     loan_amount,
     case when loan_amount > (select avg(loan_amount) from loans) then 1 else 0 end as "Above Avg Loan"
 from loans;
  
 -- 460. Show each payment with 'Above Avg Payment'.
 select 
-	  payment_id, 
+	payment_id, 
     payment_amount,
     case when payment_amount > (select avg(payment_amount) from loan_payments) then 1 else 0 end as "Above Avg Payment"
 from loan_payments;
  
 -- 461. Classify branches as 'High Deposit' or 'Low Deposit' based on total balance.
 select 
-	  branch_id, 
+	 branch_id, 
     sum(balance) as total_balance, 
     case when sum(balance) > 80000000 then "High Deposit" else "Low Deposit" end as deposit_type
 from accounts 
@@ -232,7 +232,7 @@ order by branch_id;
 
 -- 462. Label customers as 'Multi-Account' or 'Single Account'.
 select 
-	  customer_id,
+	customer_id,
     count(account_id) as total_account,
 	case when count(account_id) > 1 then "Multi_account" else "Single_account" end as account_count 
 from accounts 
@@ -249,7 +249,7 @@ select * from accounts;
 
 -- 464. Label cards as 'Active Usage' vs 'Inactive' based on status.
 select 
-	  card_id, 
+	card_id, 
     card_number, 
     card_type, 
 	case when status = "Active" then "Active Usage" else "Inactive" end as status 
@@ -271,14 +271,14 @@ from transactions;
 select 
   	account_id, 
     count(transaction_id) as total_transaction, 
-	  case when count(transaction_id) > 30 then "High Activity" else "Low Activity" end as activity 
+	case when count(transaction_id) > 30 then "High Activity" else "Low Activity" end as activity 
 from accounts as a, transactions as t 
 where a.account_id = t.source_account_id or a.account_id = t.destination_account_id 
 group by account_id;
 
 -- 468. Classify customers as 'Loan Holder' vs 'Non-Loan Holder'.
 select 
-	  distinct c.customer_id,
+	distinct c.customer_id,
     case when loan_id is not null then "Loan Holder" else "Non-Loan Holder" end as have_loan_or_not
 from customers as c 
 left join loans as l on c.customer_id = l.customer_id;
@@ -293,7 +293,7 @@ from employees;
 
 -- 470. Classify branches as 'Large' vs 'Small' based on number of employees.
 select 
-	  branch_id, 
+	branch_id, 
     count(employee_id) as total_employee,
     case when count(employee_id) > 10 then "Large" else "Small" end as employee_size
 from employees 
